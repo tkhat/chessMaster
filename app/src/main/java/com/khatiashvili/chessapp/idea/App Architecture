@@ -1,0 +1,92 @@
+first of all we need to define the knowledge
+
+What must know Adapter Class {
+
+   Properties Of the Adapter {
+        There Will Be PromotionViewHolder(
+            That means whenever Pawn Goes to the Promotion Square
+                than PromotionViewHolder Draw The Pieces which can
+                    User Alive, so that information will be saved inside The Pawn Piece
+                )
+
+        SpotViewHolder (
+            1. How Much Spot Could Draw
+            2. Color of The Spots
+            3. State of the Spot {
+                1. Which Spot Has Valid Click (it means that spot is draw The Shadow After Click or Not)
+                2. UnderTheClick (it means user already click that spot)
+                3. UnderTheDanger(
+                        it means user already click other spot and than that spot is One of the variants
+                            where user can capture the Piece
+                )
+                4. UnderThePath(
+                        it means user already click other spot and than that spot is One of the variants
+                            where user can go
+                        )
+                5. InValidClick(
+                        it means user already click that spot but He or She has Not any Valid Move
+                )
+                6. PreviousMove(
+                        it means user already play a move so that Spot is Starting or Ending Position
+                )
+                7. PieceOfThatSpotHolds(
+                        it means there is a Piece or just Empty Spot
+                )
+                8. Default( just draw the spot with or without Piece)
+            }
+        )
+   }
+
+   It means All spot Is Clickable but some of get ShadowOnThe Spot as Click Happen and Some of them
+            Do not notice just click happen
+
+   Behavior of The adapter {
+        Adapter Can catch Click Events And Emit the Spot where Click Happens
+   }
+   Dependencies {
+        Adapter Has Dependent of two Things {
+            1. Array Of Spots (
+                Adapter Use that Spot to draw The Spot with his own Color and With His Own Color
+                    and Piece
+            )
+            2. Some Game Class Who gave the information about states of the Each Spot
+        }
+   }
+}
+
+what must know the Spot class {
+    it must know its own Coordinates (X,Y)
+    it must know which Piece it Holds
+}
+
+Game Class {
+        Game Class Must Can {
+            Define The Which Spot Has ability To get Click
+            Define the State for the individual Spots {
+                It is Default ? or Under Attack or It is Path or has no valid Moves and so on
+            }
+            it is First Click ? To Define The State of the First Click or Second Click {
+                it is Valid Click or Not if it is Valid go on right away but other cases It Just Back To the Reset State
+                if it is a second Click Game must Define it is valid Move or Not
+                if it is valid move than it must change the Piece from one direction to second
+                but it is not valid then it must turn The not valid move as the first click
+                and define the New State. for example user Click The Pawn {
+                    Then Player Defines all the Spots where pawn can go or capture
+                    also define his spot as the UnderClick Condition and after the if the Second
+                    Click Will be Valid Move Player Change The own Spot Piece with empty and second
+                    Spot makes Holder For that Piece but if it is not Valid Move and that Click Happen
+                    To other Piece with the same Color Player Must Define The new states as The Click Happen First Time
+                    But if it is not the Same Color Piece Game Class must return the Previous Mode before Click Happen
+                }
+            }
+            In order To achieve that kind of behavior Game CLass must know the White Player and Black Player
+                also it must has Dependency of The board to Calculate The Spot is Clickable or Not with information
+                about the click Happen already Or Not
+        }
+        it needs to know that click is Just Valid Move ? or Just Invalid But New CLick Starting Point or notValidAtt All
+
+        To Handle all of that Game Class Gets ClickEvents With its Own Spot {
+            With Knowing of that Spot User Can Calculate New Valid Clicks With his own Calculating functions
+            and Also Calculate The paths and Directions with
+        }
+}

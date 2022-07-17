@@ -1,0 +1,90 @@
+requirements of chess app {
+
+   User can Play against computer or 1 vs 1 game
+   User can Play Puzzles to solve Chess Combinations
+   User Must Can Choose Time Mode
+   Application Must draw chess board where one user Can move Piece where will be his/her turn
+   User Can Play piece with Drag And Drop feature or By Clicking the start Spot and than End Spot
+   App should Save the moves and games so User must has the ability to make takeBack or See and analyze
+   games or puzzles which him/her solve
+
+}
+
+Ui Related {
+    I need to draw ChessBoard With piece
+    As a RecyclerViewAdapter I need to know Which Turn is it now Black Or White {
+        So it Means as RecyclerView Adapter I need To Know Which Spot is - Clickable {
+            After That I can Send Click Events
+        }
+    }
+    I need To reflect a State of The each Spot in the Board
+             which include next : (
+                 Default -> Just Render The board As it is
+                 Touch -> (
+                    Legal -> Just Change Spot Color To Yellow When User Touch This Spot
+                    Illegal-> Just Change Spot Color To Light Yellow When User Touch this Spot
+                                "Illegal Means At this Moment Piece Can't"
+                 )
+                 Path -> After Touch Happens to the Piece Draw The Green Circle All the Spots
+                            Where User Can Go
+                 Danger -> After Touch Happens to the Piece Draw The Red Circle All the Spots
+                            Where User Can Capture Opponent Piece
+                 After -> After Move Happens Make The Start And End Spot Green  Which Will Be Clue
+                            To the Players To Last Move Was from This Spot To Next Spot
+             )
+
+    It means that we Need A Class Spot Which must hav next properties :
+        Spot {
+            position: Position (Position is a Class Which Include X and Y coordinates in 2D array)
+            piece: Piece
+            state: State
+        }
+
+    Also Adapter Has Dependency The class Named Game That class must have {
+        some function who gets Spot as an Argument and Decided That Spot is Clickable or Not
+                (the spot is Clickable in following situations) {
+                    firstOne is the There is The Piece And Color whose moves turn is Right now
+                    and If there Is not a piece on the spot but least One Click happen
+                    already and that spot state represent: Path or Danger
+                    }
+
+    }
+}
+
+System Related {
+    Class Game {
+        Which Will Be One Instance for All Players And Be responsible for that {
+            Calculate Whose turn is it in the current Time
+            Count The Clicks on The adapter To Define which Spot is Clickable or not
+            Make Changes In the Board To update State
+            Define that Click is for Move or Just Touch {
+                if it is first Click Save The Spot of that Click And update
+                The board State,
+                if it is second Click Used Saved Spot from previous Click and
+                call the move function and put new Spots Coordinates as the parameter.
+                That Function Also return the Enum about Move Success {
+                    if Move Do not Validate because of Pin on the king So it means
+                    update The Spot where King is as Danger
+                    and if the move not valid because it try to capture own Piece Than Make
+                    That Piece as Touch Mode
+                }
+            }
+        }
+    }
+
+    Class Piece {
+        It will be a base Class for all Pieces {
+            and Oll of Them Had some common States and behaviors
+            states {
+                iAmWhite: Boolean
+                Coordinates: X,Y
+            }
+            Behavior {
+                validateMove()
+                Move()
+            }
+            also it could have some private
+            states and behaviors Like- KingCoordinates: X,Y and HasKingCheck(ifIgoHere)
+        }
+    }
+}

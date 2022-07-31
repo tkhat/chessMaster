@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         boardAdapter = BoardAdapter(
             GamePlay {
-                boardAdapter.notifyDataSetChanged()
+                boardAdapter.data = initData()
             }
         )
         binidng.RecyclierViewBoard.apply {

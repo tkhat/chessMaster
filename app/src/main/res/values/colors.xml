@@ -9,5 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black_spot">#B7C0D8</color>
     <color name="white_spot">#E8EDF9</color>
-    <color name="tag_color">#fca90d</color>
+    <color name="legal_touch_color">#fca90d</color>
+    <color name="illegal_touch_color">#fcf003</color>
+    <color name="last_move_color">#0356fc</color>
 </resources>

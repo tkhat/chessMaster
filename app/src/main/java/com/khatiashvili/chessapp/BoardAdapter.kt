@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.khatiashvili.chessapp.databinding.ActivityMainBinding
 import com.khatiashvili.chessapp.databinding.SpotItemBinding
 import com.khatiashvili.chessapp.system.*
 
@@ -40,7 +39,7 @@ class BoardAdapter(val gamePlay: GamePlay) : RecyclerView.Adapter<BoardAdapter.V
             drawSpot(spot, binding)
             drawState(spot.state,binding)
             binding.root.setOnClickListener {
-                gamePlay.clickHappen(spot)
+                gamePlay.touchHappen(spot)
             }
         }
 
@@ -93,7 +92,8 @@ class BoardAdapter(val gamePlay: GamePlay) : RecyclerView.Adapter<BoardAdapter.V
         binding.directionDrawable.visibility = View.VISIBLE
         when(state) {
             ChessBoardState.LAST -> {
-
+                binding.directionDrawable.setImageResource(R.drawable.last_move_color)
+                fixSize(binding.directionDrawable,true)
             }
             ChessBoardState.DANGER -> {
                 binding.directionDrawable.setImageResource(R.drawable.capture_aim)
@@ -104,10 +104,11 @@ class BoardAdapter(val gamePlay: GamePlay) : RecyclerView.Adapter<BoardAdapter.V
                 fixSize(binding.directionDrawable,false)
             }
             ChessBoardState.ILLEGAL_TOUCH -> {
-
+                binding.directionDrawable.setImageResource(R.drawable.ilegal_touch_color)
+                fixSize(binding.directionDrawable,true)
             }
             ChessBoardState.LEGAL_TOUCH -> {
-                binding.directionDrawable.setImageResource(R.drawable.tag_color)
+                binding.directionDrawable.setImageResource(R.drawable.legal_touch_color)
                 fixSize(binding.directionDrawable,true)
             }
             ChessBoardState.DEFAULT -> {

@@ -1,5 +1,8 @@
 package com.khatiashvili.chessapp
 
+import com.khatiashvili.chessapp.system.Board
+import com.khatiashvili.chessapp.system.Coordinates
+import com.khatiashvili.chessapp.system.Knight
 import org.junit.Test
 
 import org.junit.Assert.*

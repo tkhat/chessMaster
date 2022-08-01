@@ -1,6 +1,5 @@
 package com.khatiashvili.chessapp.system
 
-import android.opengl.ETC1.isValid
 import com.khatiashvili.chessapp.system.Board.board
 import com.khatiashvili.chessapp.system.Knight.Companion.knightPossibleMoves
 
@@ -93,12 +92,16 @@ abstract class Piece {
         }
     }
 
-    protected fun getPiece(x: Int, y: Int): Piece? {
+    protected fun getPieceFromYourPerspective(x: Int, y: Int): Piece? {
         return if (coordinates.x.firstAdd(x) in 0..7 && coordinates.y.firstAdd(y) in 0..7) {
             board[coordinates.x.firstAdd(x)][coordinates.y.firstAdd(y)].piece
         } else {
             null
         }
+    }
+
+    protected fun getPiece(pair: Pair<Int, Int>): Piece? {
+        return board[pair.first][pair.second].piece
     }
 
     private fun checkDiagonal(): Boolean {
@@ -196,14 +199,14 @@ class Pawn(
         var generalMovies = mutableListOf<Coordinates>()
         if (this.iAmWhite) {
             if (coordinates.x == 1) {
-                if (getPiece(1, 0) == null) {
+                if (getPieceFromYourPerspective(1, 0) == null) {
                     generalMovies.add(
                         Coordinates(
                             coordinates.x.firstAdd(1),
                             coordinates.y
                         )
                     )
-                    if (getPiece(2, 0) == null) {
+                    if (getPieceFromYourPerspective(2, 0) == null) {
 
                         generalMovies.add(
                             Coordinates(
@@ -214,7 +217,7 @@ class Pawn(
                     }
                 }
             } else {
-                if (getPiece(1, 0) == null) {
+                if (getPieceFromYourPerspective(1, 0) == null) {
                     generalMovies.add(
                         Coordinates(
                             coordinates.x.firstAdd(1),
@@ -223,8 +226,8 @@ class Pawn(
                     )
                 }
             }
-            if (getPiece(1, -1)?.iAmWhite != this.iAmWhite
-                && getPiece(1, -1) is Piece
+            if (getPieceFromYourPerspective(1, -1)?.iAmWhite != this.iAmWhite
+                && getPieceFromYourPerspective(1, -1) is Piece
             ) {
                 generalMovies.add(
                     Coordinates(
@@ -233,8 +236,8 @@ class Pawn(
                     )
                 )
             }
-            if (getPiece(1, 1)?.iAmWhite != this.iAmWhite
-                && getPiece(1, 1) is Piece
+            if (getPieceFromYourPerspective(1, 1)?.iAmWhite != this.iAmWhite
+                && getPieceFromYourPerspective(1, 1) is Piece
             ) {
                 generalMovies.add(
                     Coordinates(
@@ -245,14 +248,14 @@ class Pawn(
             }
         } else {
             if (coordinates.x == 6) {
-                if (getPiece(-1, 0) == null) {
+                if (getPieceFromYourPerspective(-1, 0) == null) {
                     generalMovies.add(
                         Coordinates(
                             coordinates.x.firstAdd(-1),
                             coordinates.y
                         )
                     )
-                    if (getPiece(-2, 0) == null) {
+                    if (getPieceFromYourPerspective(-2, 0) == null) {
                         generalMovies.add(
                             Coordinates(
                                 coordinates.x.firstAdd(-2),
@@ -262,7 +265,7 @@ class Pawn(
                     }
                 }
             } else {
-                if (getPiece(-1, 0) == null) {
+                if (getPieceFromYourPerspective(-1, 0) == null) {
                     generalMovies.add(
                         Coordinates(
                             coordinates.x.firstAdd(-1),
@@ -271,8 +274,8 @@ class Pawn(
                     )
                 }
             }
-            if (getPiece(-1, -1)?.iAmWhite != this.iAmWhite
-                && getPiece(-1, -1) is Piece
+            if (getPieceFromYourPerspective(-1, -1)?.iAmWhite != this.iAmWhite
+                && getPieceFromYourPerspective(-1, -1) is Piece
             ) {
                 generalMovies.add(
                     Coordinates(
@@ -281,8 +284,8 @@ class Pawn(
                     )
                 )
             }
-            if (getPiece(-1, 1)?.iAmWhite != this.iAmWhite
-                && getPiece(-1, 1) is Piece
+            if (getPieceFromYourPerspective(-1, 1)?.iAmWhite != this.iAmWhite
+                && getPieceFromYourPerspective(-1, 1) is Piece
             ) {
                 generalMovies.add(
                     Coordinates(
@@ -305,11 +308,49 @@ class Pawn(
 
 class King(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
     override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        TODO("Not yet implemented")
+        defineMoves { definedCoors ->
+            definedCoors.forEach { coor ->
+                if (coor == end) {
+                    this.coordinates = coor
+                    isValid.invoke(true)
+                    return@defineMoves
+                }
+            }
+        }
+        isValid.invoke(false)
     }
 
     override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
-        TODO("Not yet implemented")
+        var generalMoves = mutableListOf<Coordinates>()
+        kingMovies.forEach {
+            val tuple = (coordinates.x.firstAdd(it.first) to coordinates.y.firstAdd(it.second))
+            if (tuple.checkSize()) {
+                val piece = getPiece(tuple)
+                if (piece?.iAmWhite != this.iAmWhite) {
+                    generalMoves.add(
+                        Coordinates(
+                            tuple.first,
+                            tuple.second
+                        )
+                    )
+                }
+            }
+        }
+        update.invoke(generalMoves)
+
+    }
+
+    companion object {
+        val kingMovies = mutableListOf(
+            (-1 to -1),
+            (-1 to 0),
+            (-1 to 1),
+            (0 to -1),
+            (0 to 1),
+            (1 to -1),
+            (1 to 0),
+            (1 to 1),
+        )
     }
 
 }
@@ -335,7 +376,7 @@ class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates
     override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
         var generalMoves = mutableListOf<Coordinates>()
         for (i in coordinates.x.firstAdd(1)..7) {
-            val pc = getPiece((i.firstAdd(coordinates.x.unaryMinus())), 0)
+            val pc = getPieceFromYourPerspective((i.firstAdd(coordinates.x.unaryMinus())), 0)
             if (pc == null) {
                 generalMoves.add(Coordinates(i, coordinates.y))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -346,7 +387,7 @@ class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates
             }
         }
         for (i in coordinates.x.firstAdd(-1) downTo 0) {
-            val pc = getPiece(coordinates.x.firstAdd(-i).unaryMinus(), 0)
+            val pc = getPieceFromYourPerspective(coordinates.x.firstAdd(-i).unaryMinus(), 0)
             if (pc == null) {
                 generalMoves.add(Coordinates(i, coordinates.y))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -357,7 +398,7 @@ class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates
             }
         }
         for (i in coordinates.y.firstAdd(-1) downTo 0) {
-            val pc = getPiece(0, coordinates.y.firstAdd(-i).unaryMinus())
+            val pc = getPieceFromYourPerspective(0, coordinates.y.firstAdd(-i).unaryMinus())
             if (pc == null) {
                 generalMoves.add(Coordinates(coordinates.x, i))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -368,7 +409,7 @@ class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates
             }
         }
         for (i in coordinates.y.firstAdd(1)..7) {
-            val pc = getPiece(0, i.firstAdd(coordinates.y.unaryMinus()))
+            val pc = getPieceFromYourPerspective(0, i.firstAdd(coordinates.y.unaryMinus()))
             if (pc == null) {
                 generalMoves.add(Coordinates(coordinates.x, i))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -668,7 +709,7 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
             }
         }
         for (i in coordinates.x.firstAdd(1)..7) {
-            val pc = getPiece((i.firstAdd(coordinates.x.unaryMinus())), 0)
+            val pc = getPieceFromYourPerspective((i.firstAdd(coordinates.x.unaryMinus())), 0)
             if (pc == null) {
                 generalMoves.add(Coordinates(i, coordinates.y))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -679,7 +720,7 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
             }
         }
         for (i in coordinates.x.firstAdd(-1) downTo 0) {
-            val pc = getPiece(coordinates.x.firstAdd(-i).unaryMinus(), 0)
+            val pc = getPieceFromYourPerspective(coordinates.x.firstAdd(-i).unaryMinus(), 0)
             if (pc == null) {
                 generalMoves.add(Coordinates(i, coordinates.y))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -690,7 +731,7 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
             }
         }
         for (i in coordinates.y.firstAdd(-1) downTo 0) {
-            val pc = getPiece(0, coordinates.y.firstAdd(-i).unaryMinus())
+            val pc = getPieceFromYourPerspective(0, coordinates.y.firstAdd(-i).unaryMinus())
             if (pc == null) {
                 generalMoves.add(Coordinates(coordinates.x, i))
             } else if (pc.iAmWhite == this.iAmWhite) {
@@ -701,7 +742,7 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
             }
         }
         for (i in coordinates.y.firstAdd(1)..7) {
-            val pc = getPiece(0, i.firstAdd(coordinates.y.unaryMinus()))
+            val pc = getPieceFromYourPerspective(0, i.firstAdd(coordinates.y.unaryMinus()))
             if (pc == null) {
                 generalMoves.add(Coordinates(coordinates.x, i))
             } else if (pc.iAmWhite == this.iAmWhite) {

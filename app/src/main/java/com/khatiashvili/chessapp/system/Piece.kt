@@ -6,91 +6,17 @@ import com.khatiashvili.chessapp.system.Knight.Companion.knightPossibleMoves
 abstract class Piece {
     abstract val iAmWhite: Boolean
     abstract var coordinates: Coordinates
-    private lateinit var kingCoordinates: Coordinates
 
-    abstract fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit)
-    abstract fun defineMoves(update: (moves: List<Coordinates>) -> Unit)
+    abstract fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    )
 
-    protected fun hasKingCheck(): Boolean {
-        initKingCoordinates()
-        return checkVerticalAndHorizontal() || checkKnight() || checkDiagonal() || checkPawns()
-    }
-
-    fun checkPawns(): Boolean {
-        val result = false
-        if (iAmWhite) {
-            val leftPc = getPieceFromKingsPerspective(1, -1)
-            val rightPc = getPieceFromKingsPerspective(1, 1)
-            if (leftPc?.iAmWhite != this.iAmWhite && leftPc is Pawn ||
-                rightPc?.iAmWhite != this.iAmWhite && rightPc is Pawn
-            ) {
-                return true
-            }
-        } else {
-            val leftPc = getPieceFromKingsPerspective(-1, 1)
-            val rightPc = getPieceFromKingsPerspective(-1, -1)
-            if (leftPc?.iAmWhite != this.iAmWhite && leftPc is Pawn ||
-                rightPc?.iAmWhite != this.iAmWhite && rightPc is Pawn
-            ) {
-                return true
-            }
-        }
-        return result
-    }
-
-    private fun initKingCoordinates() {
-        kingCoordinates = if (iAmWhite) Coordinates(0, 4) else Coordinates(7, 4)
-    }
-
-    private fun checkVerticalAndHorizontal(): Boolean {
-        var result = false
-        for (i in kingCoordinates.x - 1 downTo 0) {
-            val piece = getPieceFromKingsPerspective(i, kingCoordinates.y)
-            if (piece?.iAmWhite == this.iAmWhite) {
-                break
-            } else if (piece is Queen || piece is Rook) {
-                return true
-            }
-        }
-        for (i in kingCoordinates.x + 1..7) {
-            val piece = getPieceFromKingsPerspective(i, kingCoordinates.y)
-            if (piece?.iAmWhite == this.iAmWhite) {
-                break
-            } else if (piece is Queen || piece is Rook) {
-                return true
-            }
-        }
-        for (i in kingCoordinates.y - 1 downTo 0) {
-            val piece = getPieceFromKingsPerspective(kingCoordinates.x, i)
-            if (piece?.iAmWhite == this.iAmWhite) {
-                break
-            } else if (piece is Queen || piece is Rook) {
-                return true
-            }
-        }
-        for (i in kingCoordinates.y + 1..7) {
-            val piece = getPieceFromKingsPerspective(kingCoordinates.x, i)
-            if (piece?.iAmWhite == this.iAmWhite) {
-                break
-            } else if (piece is Queen || piece is Rook) {
-                return true
-            }
-        }
-        return result
-    }
-
-
-    private fun getPieceFromKingsPerspective(x: Int, y: Int): Piece? {
-        /**
-         * if x and y Coordinates is inside the size of the Array func return the element
-         * otherwise it returns null
-         * **/
-        return if (kingCoordinates.x.firstAdd(x) in 0..7 && kingCoordinates.y.firstAdd(y) in 0..7) {
-            board[kingCoordinates.x.firstAdd(x)][kingCoordinates.y.firstAdd(y)].piece
-        } else {
-            null
-        }
-    }
+    abstract fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    )
 
     protected fun getPieceFromYourPerspective(x: Int, y: Int): Piece? {
         return if (coordinates.x.firstAdd(x) in 0..7 && coordinates.y.firstAdd(y) in 0..7) {
@@ -104,72 +30,7 @@ abstract class Piece {
         return board[pair.first][pair.second].piece
     }
 
-    private fun checkDiagonal(): Boolean {
-        var spaceA = true
-        var spaceB = true
-        var spaceC = true
-        var spaceD = true
-        for (i in 1..7) {
 
-            if (spaceA) {
-                val a = getPieceFromKingsPerspective(i.unaryMinus(), i.unaryMinus())
-                if (a?.iAmWhite == this.iAmWhite) {
-                    spaceA = false
-                } else {
-                    if (a is Queen || a is Bishop) {
-                        return true
-                    }
-                }
-            }
-            if (spaceB) {
-                val b = getPieceFromKingsPerspective(i, i)
-                if (b?.iAmWhite == this.iAmWhite) {
-                    spaceB = false
-                } else {
-                    if (b is Queen || b is Bishop) {
-                        return true
-                    }
-                }
-            }
-            if (spaceC) {
-                val c = getPieceFromKingsPerspective(i.unaryMinus(), i)
-                if (c?.iAmWhite == this.iAmWhite) {
-                    spaceC = false
-                } else {
-                    if (c is Queen || c is Bishop) {
-                        return true
-                    }
-                }
-            }
-            if (spaceD) {
-                val d = getPieceFromKingsPerspective(i, i.unaryMinus())
-                if (d?.iAmWhite == this.iAmWhite) {
-                    spaceD = false
-                } else {
-                    if (d is Queen || d is Bishop) {
-                        return true
-                    }
-                }
-            }
-        }
-        return false
-    }
-
-
-    private fun checkKnight(): Boolean {
-        var hasCheck = false
-        knightPossibleMoves.forEach {
-            val element = getPieceFromKingsPerspective(it.first, it.second)
-            if (element is Knight && element.iAmWhite != this.iAmWhite) {
-                return true
-            }
-        }
-        return hasCheck
-    }
-
-    protected fun setKingCoordinates(coordinates: Coordinates) {
-        this.coordinates = coordinates
-    }
 }
 
 class Pawn(
@@ -178,12 +39,13 @@ class Pawn(
 ) : Piece() {
     private var checkEnPassant: SavedMoves? = null
 
-    override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        if (hasKingCheck()) {
-            isValid(false)
-            return
-        }
-        defineMoves { definedCoors ->
+    override fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    ) {
+
+        defineMoves(kingCoordinates) { definedCoors ->
             definedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
@@ -195,7 +57,10 @@ class Pawn(
         isValid.invoke(false)
     }
 
-    override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
+    override fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    ) {
         var generalMovies = mutableListOf<Coordinates>()
         if (this.iAmWhite) {
             if (coordinates.x == 1) {
@@ -295,7 +160,13 @@ class Pawn(
                 )
             }
         }
-        update.invoke(generalMovies)
+        update.invoke(
+            generalMovies.filterMovesForKing(
+                kingCoordinates,
+                coordinates,
+                iAmWhite
+            )
+        )
     }
     /***
      * Needs to Defines All moves that does not involves check for his king
@@ -307,9 +178,20 @@ class Pawn(
 
 
 class King(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
-    override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        defineMoves { definedCoors ->
-            definedCoors.forEach { coor ->
+    override fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    ) {
+        defineMoves(kingCoordinates) { definedCoors ->
+
+            val validatedCoors = definedCoors.filterMovesForKing(
+                kingCoordinates = kingCoordinates,
+                startCoordinates = this.coordinates,
+                isKingWhite = this.iAmWhite
+            )
+
+            validatedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
                     isValid.invoke(true)
@@ -320,7 +202,10 @@ class King(override val iAmWhite: Boolean, override var coordinates: Coordinates
         isValid.invoke(false)
     }
 
-    override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
+    override fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    ) {
         var generalMoves = mutableListOf<Coordinates>()
         kingMovies.forEach {
             val tuple = (coordinates.x.firstAdd(it.first) to coordinates.y.firstAdd(it.second))
@@ -336,7 +221,13 @@ class King(override val iAmWhite: Boolean, override var coordinates: Coordinates
                 }
             }
         }
-        update.invoke(generalMoves)
+        update.invoke(
+            generalMoves.filterMovesForKing(
+                kingCoordinates,
+                coordinates,
+                iAmWhite
+            )
+        )
 
     }
 
@@ -355,14 +246,24 @@ class King(override val iAmWhite: Boolean, override var coordinates: Coordinates
 
 }
 
-class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
-    override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        if (hasKingCheck()) {
-            isValid(false)
-            return
-        }
-        defineMoves { definedCoors ->
-            definedCoors.forEach { coor ->
+class Rook(
+    override val iAmWhite: Boolean,
+    override var coordinates: Coordinates,
+) : Piece() {
+    override fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    ) {
+        defineMoves(kingCoordinates) { definedCoors ->
+
+            val validatedCoors = definedCoors.filterMovesForKing(
+                kingCoordinates = kingCoordinates,
+                startCoordinates = this.coordinates,
+                isKingWhite = this.iAmWhite
+            )
+
+            validatedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
                     isValid.invoke(true)
@@ -373,7 +274,10 @@ class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates
         isValid.invoke(false)
     }
 
-    override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
+    override fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    ) {
         var generalMoves = mutableListOf<Coordinates>()
         for (i in coordinates.x.firstAdd(1)..7) {
             val pc = getPieceFromYourPerspective((i.firstAdd(coordinates.x.unaryMinus())), 0)
@@ -419,19 +323,32 @@ class Rook(override val iAmWhite: Boolean, override var coordinates: Coordinates
                 break
             }
         }
-        update.invoke(generalMoves)
+        update.invoke(
+            generalMoves.filterMovesForKing(
+                kingCoordinates,
+                coordinates,
+                iAmWhite
+            )
+        )
     }
 
 }
 
 class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
-    override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        if (hasKingCheck()) {
-            isValid(false)
-            return
-        }
-        defineMoves { definedCoors ->
-            definedCoors.forEach { coor ->
+    override fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    ) {
+
+        defineMoves(kingCoordinates) { definedCoors ->
+            val validatedCoors = definedCoors.filterMovesForKing(
+                kingCoordinates = kingCoordinates,
+                startCoordinates = this.coordinates,
+                isKingWhite = this.iAmWhite
+            )
+
+            validatedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
                     isValid.invoke(true)
@@ -442,7 +359,10 @@ class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinat
         isValid.invoke(false)
     }
 
-    override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
+    override fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    ) {
         val generalMoves = mutableListOf<Coordinates>()
         knightPossibleMoves.forEach {
             if (hasPath(it) == true) {
@@ -454,7 +374,13 @@ class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinat
                 )
             }
         }
-        update.invoke(generalMoves)
+        update.invoke(
+            generalMoves.filterMovesForKing(
+                kingCoordinates,
+                coordinates,
+                iAmWhite
+            )
+        )
     }
 
     private fun hasPath(pair: Pair<Int, Int>): Boolean? {
@@ -482,13 +408,21 @@ class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinat
 }
 
 class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
-    override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        if (hasKingCheck()) {
-            isValid(false)
-            return
-        }
-        defineMoves { definedCoors ->
-            definedCoors.forEach { coor ->
+
+    override fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    ) {
+
+        defineMoves(kingCoordinates) { definedCoors ->
+            val validatedCoors = definedCoors.filterMovesForKing(
+                kingCoordinates = kingCoordinates,
+                startCoordinates = this.coordinates,
+                isKingWhite = this.iAmWhite
+            )
+
+            validatedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
                     isValid.invoke(true)
@@ -499,7 +433,10 @@ class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinat
         isValid.invoke(false)
     }
 
-    override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
+    override fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    ) {
         var generalMoves = mutableListOf<Coordinates>()
         var boolRightUp = true
         var boolLeftUp = true
@@ -592,19 +529,31 @@ class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinat
                 }
             }
         }
-        update.invoke(generalMoves)
+        update.invoke(
+            generalMoves.filterMovesForKing(
+                kingCoordinates,
+                coordinates,
+                iAmWhite
+            )
+        )
     }
 
 }
 
 class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
-    override fun isValidMove(end: Coordinates, isValid: (Boolean) -> Unit) {
-        if (hasKingCheck()) {
-            isValid(false)
-            return
-        }
-        defineMoves { definedCoors ->
-            definedCoors.forEach { coor ->
+    override fun isValidMove(
+        end: Coordinates,
+        kingCoordinates: Coordinates,
+        isValid: (Boolean) -> Unit
+    ) {
+        defineMoves(kingCoordinates) { definedCoors ->
+            val validatedCoors = definedCoors.filterMovesForKing(
+                kingCoordinates = kingCoordinates,
+                startCoordinates = this.coordinates,
+                isKingWhite = this.iAmWhite
+            )
+
+            validatedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
                     isValid.invoke(true)
@@ -615,7 +564,10 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
         isValid.invoke(false)
     }
 
-    override fun defineMoves(update: (moves: List<Coordinates>) -> Unit) {
+    override fun defineMoves(
+        kingCoordinates: Coordinates,
+        update: (moves: MutableList<Coordinates>) -> Unit
+    ) {
         var generalMoves = mutableListOf<Coordinates>()
         var boolRightUp = true
         var boolLeftUp = true
@@ -752,13 +704,19 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
                 break
             }
         }
-        update.invoke(generalMoves)
+        update.invoke(
+            generalMoves.filterMovesForKing(
+                kingCoordinates,
+                coordinates,
+                iAmWhite
+            )
+        )
     }
 
 
 }
 
-class Spot(
+data class Spot(
     val coordinates: Coordinates,
     var piece: Piece? = null,
     var state: ChessBoardState

@@ -1,9 +1,11 @@
 package com.khatiashvili.chessapp.system
 
+import android.content.SharedPreferences
+
 object Board {
 
-    var board = mutableListOf<List<Spot>>(
-        listOf(
+    var board = mutableListOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(0, 0),
                 piece = Rook(true, Coordinates(0, 0)),
@@ -45,7 +47,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             )
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(1, 0),
                 piece = Pawn(true, Coordinates(1, 0)),
@@ -87,7 +89,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             ),
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(2, 0),
                 state = ChessBoardState.DEFAULT
@@ -121,7 +123,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             )
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(3, 0),
                 state = ChessBoardState.DEFAULT
@@ -155,7 +157,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             )
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(4, 0),
                 state = ChessBoardState.DEFAULT
@@ -189,7 +191,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             )
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(5, 0),
                 state = ChessBoardState.DEFAULT
@@ -223,7 +225,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             )
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(6, 0),
                 piece = Pawn(false, Coordinates(6, 0)),
@@ -265,7 +267,7 @@ object Board {
                 state = ChessBoardState.DEFAULT
             )
         ),
-        listOf(
+        mutableListOf(
             Spot(
                 coordinates = Coordinates(7, 0),
                 piece = Rook(false, Coordinates(7, 0)),
@@ -306,5 +308,91 @@ object Board {
                 piece = Rook(false, Coordinates(7, 7)),
                 state = ChessBoardState.DEFAULT
             )
-        ))
+        )
+    )
+
+    fun getBoardForTesting(): MutableList<MutableList<Spot>> {
+        var testBoard = mutableListOf(
+            mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            ), mutableListOf(
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+                Spot(Coordinates(0, 1), null, ChessBoardState.LAST),
+            )
+        )
+
+        for (i in board.indices) {
+            for (j in board.indices) {
+                testBoard[i][j] = board[i][j].copy()
+            }
+        }
+        return testBoard
+    }
 }

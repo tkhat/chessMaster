@@ -9,29 +9,26 @@ fun Pair<Int, Int>.checkSize(): Boolean {
 }
 
 fun MutableList<Coordinates>.filterMovesForKing(
-    kingCoordinates: Coordinates,
     startCoordinates: Coordinates,
     isKingWhite: Boolean
 ): MutableList<Coordinates> {
+    var movesForDelete = mutableListOf<Coordinates>()
     var testingBoard = Board.getBoardForTesting()
-    this.listIterator().run {
 
-        if (hasNext()){
-            val it = this.next()
-            testingBoard[it.x][it.y].piece =
-                testingBoard[startCoordinates.x][startCoordinates.y].piece
-            testingBoard[startCoordinates.x][startCoordinates.y].piece = null
+    this.forEach {
 
-            if (HasKingCheckerUtil(
-                    kingCoordinates,
-                    testingBoard,
-                    isKingWhite
-                ).hasKingCheck()
-            ) {
-                this.remove()
-            }
+        val obj = testingBoard[startCoordinates.x][startCoordinates.y].piece
+        testingBoard[startCoordinates.x][startCoordinates.y].piece = null
+        testingBoard[it.x][it.y].piece = obj
+
+        if (HasKingCheckerUtil(testingBoard, isKingWhite).hasKingCheck()
+        ) {
+            movesForDelete.add(it)
         }
         testingBoard = Board.getBoardForTesting()
+    }
+    movesForDelete.forEach {
+        remove(it)
     }
     return this
 }

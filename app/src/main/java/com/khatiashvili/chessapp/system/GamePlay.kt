@@ -6,8 +6,6 @@ class GamePlay(var notify: () -> Unit) {
     private var isWhiteTurn: Boolean = true
     private var previousStates = mutableListOf<Coordinates>()
     private var moves = mutableListOf<SavedMoves>()
-    private var whiteKingCoordinates = Coordinates(0, 4)
-    private var blackKingCoordinates = Coordinates(7, 4)
 
     fun touchHappen(spot: Spot) {
         when {
@@ -34,7 +32,6 @@ class GamePlay(var notify: () -> Unit) {
     private fun updateStates(touchPiece: Spot) {
         this.touchPiece = touchPiece
         touchPiece.piece?.defineMoves(
-            if (touchPiece.piece!!.iAmWhite) whiteKingCoordinates else blackKingCoordinates
         ) { piece ->
 
             clearState()
@@ -77,8 +74,7 @@ class GamePlay(var notify: () -> Unit) {
 
     private fun validateMove(spot: Spot) {
         touchPiece?.piece?.isValidMove(
-            spot.coordinates,
-            if (touchPiece!!.piece!!.iAmWhite) whiteKingCoordinates else blackKingCoordinates
+            spot.coordinates
         ) {
             if (it) {
                 makeMove(touchPiece!!, spot)

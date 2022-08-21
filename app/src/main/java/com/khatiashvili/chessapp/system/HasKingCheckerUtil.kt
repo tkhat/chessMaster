@@ -1,10 +1,21 @@
 package com.khatiashvili.chessapp.system
 
 class HasKingCheckerUtil(
-    private val kingCoordinates: Coordinates,
     private val testBoard: MutableList<MutableList<Spot>>,
     private val iAmWhite: Boolean
 ) {
+
+    private lateinit var kingCoordinates: Coordinates
+
+    init {
+        testBoard.forEach {
+            it.forEach { spot ->
+                if (spot.piece is King && spot.piece?.iAmWhite == iAmWhite) {
+                    kingCoordinates = spot.coordinates
+                }
+            }
+        }
+    }
 
     private fun checkVerticalAndHorizontal(): Boolean {
         var result = false

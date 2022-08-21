@@ -9,12 +9,10 @@ abstract class Piece {
 
     abstract fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     )
 
     abstract fun defineMoves(
-        kingCoordinates: Coordinates,
         update: (moves: MutableList<Coordinates>) -> Unit
     )
 
@@ -41,11 +39,10 @@ class Pawn(
 
     override fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     ) {
 
-        defineMoves(kingCoordinates) { definedCoors ->
+        defineMoves { definedCoors ->
             definedCoors.forEach { coor ->
                 if (coor == end) {
                     this.coordinates = coor
@@ -58,7 +55,6 @@ class Pawn(
     }
 
     override fun defineMoves(
-        kingCoordinates: Coordinates,
         update: (moves: MutableList<Coordinates>) -> Unit
     ) {
         var generalMovies = mutableListOf<Coordinates>()
@@ -162,7 +158,6 @@ class Pawn(
         }
         update.invoke(
             generalMovies.filterMovesForKing(
-                kingCoordinates,
                 coordinates,
                 iAmWhite
             )
@@ -180,13 +175,11 @@ class Pawn(
 class King(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
     override fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     ) {
-        defineMoves(kingCoordinates) { definedCoors ->
+        defineMoves { definedCoors ->
 
             val validatedCoors = definedCoors.filterMovesForKing(
-                kingCoordinates = kingCoordinates,
                 startCoordinates = this.coordinates,
                 isKingWhite = this.iAmWhite
             )
@@ -203,7 +196,7 @@ class King(override val iAmWhite: Boolean, override var coordinates: Coordinates
     }
 
     override fun defineMoves(
-        kingCoordinates: Coordinates,
+
         update: (moves: MutableList<Coordinates>) -> Unit
     ) {
         var generalMoves = mutableListOf<Coordinates>()
@@ -223,7 +216,6 @@ class King(override val iAmWhite: Boolean, override var coordinates: Coordinates
         }
         update.invoke(
             generalMoves.filterMovesForKing(
-                kingCoordinates,
                 coordinates,
                 iAmWhite
             )
@@ -252,13 +244,11 @@ class Rook(
 ) : Piece() {
     override fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     ) {
-        defineMoves(kingCoordinates) { definedCoors ->
+        defineMoves { definedCoors ->
 
             val validatedCoors = definedCoors.filterMovesForKing(
-                kingCoordinates = kingCoordinates,
                 startCoordinates = this.coordinates,
                 isKingWhite = this.iAmWhite
             )
@@ -275,7 +265,6 @@ class Rook(
     }
 
     override fun defineMoves(
-        kingCoordinates: Coordinates,
         update: (moves: MutableList<Coordinates>) -> Unit
     ) {
         var generalMoves = mutableListOf<Coordinates>()
@@ -325,7 +314,6 @@ class Rook(
         }
         update.invoke(
             generalMoves.filterMovesForKing(
-                kingCoordinates,
                 coordinates,
                 iAmWhite
             )
@@ -337,13 +325,11 @@ class Rook(
 class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
     override fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     ) {
 
-        defineMoves(kingCoordinates) { definedCoors ->
+        defineMoves { definedCoors ->
             val validatedCoors = definedCoors.filterMovesForKing(
-                kingCoordinates = kingCoordinates,
                 startCoordinates = this.coordinates,
                 isKingWhite = this.iAmWhite
             )
@@ -360,7 +346,6 @@ class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinat
     }
 
     override fun defineMoves(
-        kingCoordinates: Coordinates,
         update: (moves: MutableList<Coordinates>) -> Unit
     ) {
         val generalMoves = mutableListOf<Coordinates>()
@@ -376,7 +361,6 @@ class Knight(override val iAmWhite: Boolean, override var coordinates: Coordinat
         }
         update.invoke(
             generalMoves.filterMovesForKing(
-                kingCoordinates,
                 coordinates,
                 iAmWhite
             )
@@ -411,13 +395,11 @@ class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinat
 
     override fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     ) {
 
-        defineMoves(kingCoordinates) { definedCoors ->
+        defineMoves { definedCoors ->
             val validatedCoors = definedCoors.filterMovesForKing(
-                kingCoordinates = kingCoordinates,
                 startCoordinates = this.coordinates,
                 isKingWhite = this.iAmWhite
             )
@@ -434,7 +416,6 @@ class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinat
     }
 
     override fun defineMoves(
-        kingCoordinates: Coordinates,
         update: (moves: MutableList<Coordinates>) -> Unit
     ) {
         var generalMoves = mutableListOf<Coordinates>()
@@ -531,7 +512,6 @@ class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinat
         }
         update.invoke(
             generalMoves.filterMovesForKing(
-                kingCoordinates,
                 coordinates,
                 iAmWhite
             )
@@ -543,12 +523,10 @@ class Bishop(override val iAmWhite: Boolean, override var coordinates: Coordinat
 class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinates) : Piece() {
     override fun isValidMove(
         end: Coordinates,
-        kingCoordinates: Coordinates,
         isValid: (Boolean) -> Unit
     ) {
-        defineMoves(kingCoordinates) { definedCoors ->
+        defineMoves { definedCoors ->
             val validatedCoors = definedCoors.filterMovesForKing(
-                kingCoordinates = kingCoordinates,
                 startCoordinates = this.coordinates,
                 isKingWhite = this.iAmWhite
             )
@@ -565,7 +543,6 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
     }
 
     override fun defineMoves(
-        kingCoordinates: Coordinates,
         update: (moves: MutableList<Coordinates>) -> Unit
     ) {
         var generalMoves = mutableListOf<Coordinates>()
@@ -706,7 +683,6 @@ class Queen(override val iAmWhite: Boolean, override var coordinates: Coordinate
         }
         update.invoke(
             generalMoves.filterMovesForKing(
-                kingCoordinates,
                 coordinates,
                 iAmWhite
             )

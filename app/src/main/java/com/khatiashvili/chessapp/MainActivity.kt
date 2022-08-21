@@ -28,9 +28,12 @@ class MainActivity : AppCompatActivity() {
         )
         binidng.RecyclierViewBoard.apply {
             adapter = boardAdapter
-            layoutManager = GridLayoutManager(this@MainActivity,8)
+            layoutManager = GridLayoutManager(this@MainActivity, 8)
         }
         boardAdapter.data = initData()
+        binidng.resButton.setOnClickListener {
+
+        }
     }
 
     fun initData(): MutableList<Spot> {
@@ -42,4 +45,5 @@ class MainActivity : AppCompatActivity() {
         }
         return local
     }
+
 }

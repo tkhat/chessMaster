@@ -1,13 +1,12 @@
 package com.khatiashvili.chessapp
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.khatiashvili.chessapp.databinding.ActivityMainBinding
-import com.khatiashvili.chessapp.databinding.SpotItemBinding
-import com.khatiashvili.chessapp.system.Board
 import com.khatiashvili.chessapp.system.GamePlay
-import com.khatiashvili.chessapp.system.Spot
+import com.khatiashvili.chessapp.system.board.Board
+import com.khatiashvili.chessapp.system.board.Spot
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
         boardAdapter = BoardAdapter(
             GamePlay {
-                boardAdapter.data = initData()
+                boardAdapter.notifyDataSetChanged()
             }
         )
         binidng.RecyclierViewBoard.apply {

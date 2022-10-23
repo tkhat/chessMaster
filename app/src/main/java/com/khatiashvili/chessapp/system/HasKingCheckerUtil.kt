@@ -1,5 +1,9 @@
 package com.khatiashvili.chessapp.system
 
+import com.khatiashvili.chessapp.system.board.Coordinates
+import com.khatiashvili.chessapp.system.board.Spot
+import com.khatiashvili.chessapp.system.piece.*
+
 class HasKingCheckerUtil(
     private val testBoard: MutableList<MutableList<Spot>>,
     private val iAmWhite: Boolean

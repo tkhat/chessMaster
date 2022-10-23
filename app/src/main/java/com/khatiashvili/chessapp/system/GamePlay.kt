@@ -1,11 +1,18 @@
 package com.khatiashvili.chessapp.system
 
+import com.khatiashvili.chessapp.system.board.Board
+import com.khatiashvili.chessapp.system.board.ChessBoardState
+import com.khatiashvili.chessapp.system.board.Coordinates
+import com.khatiashvili.chessapp.system.board.Spot
+import com.khatiashvili.chessapp.system.piece.Piece
+
 class GamePlay(var notify: () -> Unit) {
 
     private var touchPiece: Spot? = null
     private var isWhiteTurn: Boolean = true
     private var previousStates = mutableListOf<Coordinates>()
     private var moves = mutableListOf<SavedMoves>()
+
 
     fun touchHappen(spot: Spot) {
         when {

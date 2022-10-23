@@ -6,7 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.khatiashvili.chessapp.databinding.SpotItemBinding
-import com.khatiashvili.chessapp.system.*
+import com.khatiashvili.chessapp.system.GamePlay
+import com.khatiashvili.chessapp.system.board.ChessBoardState
+import com.khatiashvili.chessapp.system.board.Spot
+import com.khatiashvili.chessapp.system.piece.*
 
 class BoardAdapter(val gamePlay: GamePlay) : RecyclerView.Adapter<BoardAdapter.ViewHolder>() {
 

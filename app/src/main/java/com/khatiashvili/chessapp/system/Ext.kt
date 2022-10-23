@@ -1,5 +1,8 @@
 package com.khatiashvili.chessapp.system
 
+import com.khatiashvili.chessapp.system.board.Board
+import com.khatiashvili.chessapp.system.board.Coordinates
+
 fun Int.firstAdd(add: Int): Int {
     return this + add
 }

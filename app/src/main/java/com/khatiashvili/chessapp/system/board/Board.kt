@@ -1,6 +1,7 @@
-package com.khatiashvili.chessapp.system
+package com.khatiashvili.chessapp.system.board
 
-import android.content.SharedPreferences
+import com.khatiashvili.chessapp.system.piece.*
+import kotlin.coroutines.coroutineContext
 
 object Board {
 
@@ -394,5 +395,33 @@ object Board {
             }
         }
         return testBoard
+    }
+
+    fun getWhitePieces(): List<Spot> {
+        val result = mutableListOf<Spot>()
+        board.forEach { column ->
+            column.forEach {
+                if (it.piece?.iAmWhite == true) {
+                    result.add(it)
+                }
+            }
+        }
+        return result
+    }
+
+    fun getBlackPieces(): List<Spot> {
+        val result = mutableListOf<Spot>()
+        board.forEach { column ->
+            column.forEach {
+                if (it.piece?.iAmWhite == false) {
+                    result.add(it)
+                }
+            }
+        }
+        return result
+    }
+
+    fun getSpot(coordinates: Coordinates): Spot {
+        return coordinates getSpot board
     }
 }

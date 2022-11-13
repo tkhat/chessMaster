@@ -4,8 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.khatiashvili.chessapp.databinding.ActivityMainBinding
-import com.khatiashvili.chessapp.databinding.SpotItemBinding
-import com.khatiashvili.chessapp.system.Board
+import com.khatiashvili.chessapp.chess.board.Board
 import com.khatiashvili.chessapp.system.GamePlay
 import com.khatiashvili.chessapp.system.Spot
 

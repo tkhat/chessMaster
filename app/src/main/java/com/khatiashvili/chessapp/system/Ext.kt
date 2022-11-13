@@ -1,5 +1,7 @@
 package com.khatiashvili.chessapp.system
 
+import com.khatiashvili.chessapp.chess.board.Board
+
 fun Int.firstAdd(add: Int): Int {
     return this + add
 }

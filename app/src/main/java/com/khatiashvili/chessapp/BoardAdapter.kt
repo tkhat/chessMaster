@@ -88,30 +88,30 @@ class BoardAdapter(val gamePlay: GamePlay) : RecyclerView.Adapter<BoardAdapter.V
         }
     }
 
-    private fun drawState(state: ChessBoardState, binding: SpotItemBinding) {
+    private fun drawState(state: ChessSpotState, binding: SpotItemBinding) {
         binding.directionDrawable.visibility = View.VISIBLE
         when(state) {
-            ChessBoardState.LAST -> {
+            ChessSpotState.LAST -> {
                 binding.directionDrawable.setImageResource(R.drawable.last_move_color)
                 fixSize(binding.directionDrawable,true)
             }
-            ChessBoardState.DANGER -> {
+            ChessSpotState.DANGER -> {
                 binding.directionDrawable.setImageResource(R.drawable.capture_aim)
                 fixSize(binding.directionDrawable,true)
             }
-            ChessBoardState.PATH -> {
+            ChessSpotState.PATH -> {
                 binding.directionDrawable.setImageResource(R.drawable.free_direction)
                 fixSize(binding.directionDrawable,false)
             }
-            ChessBoardState.ILLEGAL_TOUCH -> {
+            ChessSpotState.ILLEGAL_TOUCH -> {
                 binding.directionDrawable.setImageResource(R.drawable.ilegal_touch_color)
                 fixSize(binding.directionDrawable,true)
             }
-            ChessBoardState.LEGAL_TOUCH -> {
+            ChessSpotState.LEGAL_TOUCH -> {
                 binding.directionDrawable.setImageResource(R.drawable.legal_touch_color)
                 fixSize(binding.directionDrawable,true)
             }
-            ChessBoardState.DEFAULT -> {
+            ChessSpotState.DEFAULT -> {
                 binding.directionDrawable.visibility = View.GONE
             }
         }
